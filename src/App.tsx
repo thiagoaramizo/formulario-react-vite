@@ -1,47 +1,32 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { createTheme, ThemeProvider } from '@mui/material';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import './App.scss'
+import Editor from './pages/Editor/Editor';
+import Inicial from './pages/Inicial/Inicial'
 
-import './App.css'
-import { addLista } from './redux/listaSlice'
-
-
-interface IState {
-  lista: Array<string>
-}
+// MUI theme personalization
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#224d8f',
+    },
+    secondary: {
+      main: '#6029d6',
+    },
+  },
+});
 
 function App() {
-
-  const lista = useSelector<any>( (state) => state.lista.value ) as Array<string>
-  const dispatch = useDispatch()
-
-  const [count, setCount] = useState(1)
-  const [inputValue, setInputValue] = useState('')
-
-  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = event => {
-      setInputValue( event.target.value )
-  }
-
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
-    event.preventDefault()
-    dispatch( addLista( inputValue ) )
-    setCount(count+1)
-    setInputValue('')
-  }
-
   return (
     <div className="App">
-      <h1> Hello Word! </h1>
-      <form onSubmit={handleSubmit}>
-        <input type='text' value={inputValue} onChange={handleInputChange} />
-        <button  type='submit'>Salvar</button>
-      </form>
-      <h2> Lista de itens </h2>
-      <ul>
-        {lista.map( (item, i)=> (
-          <li key={i}>{item}</li>
-        ))}
-      </ul>
-      
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Inicial/>} />
+            <Route path='/editor/' element={<Editor/>} />            
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </div>
   )
 }
