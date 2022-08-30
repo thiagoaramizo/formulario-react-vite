@@ -2,29 +2,43 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Box, Button, Card, CardContent, Input, TextField, Typography } from '@mui/material';
 
-import { addItem } from '../../redux/sanfonaSlice';
+import { addBloco } from '../../redux/documentoSlice';
+import IBloco from '../../interfaces/IBloco';
 
-export default function Formulario() {
+
+interface props {
+    bloco: IBloco
+}
+
+export default function BlocoEditor( { bloco }: props ) {
 
     const dispatch = useDispatch()
 
     const [titulo, setTitulo] = useState('')
-    const [conteudo, setConteudo] = useState('')
+    const [texto, setTexto] = useState('')
 
     const handleTituloChange: React.ChangeEventHandler<HTMLInputElement> = event => {
         setTitulo(event.target.value)
     }
-    const handleConteudoChange: React.ChangeEventHandler<HTMLInputElement> = event => {
-        setConteudo(event.target.value)
+    const handleTextoChange: React.ChangeEventHandler<HTMLInputElement> = event => {
+        setTexto(event.target.value)
     }
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = event => {
         event.preventDefault()
-        if (titulo && conteudo) {
+        if (titulo && texto) {
             const id = Math.random().toString(36).slice(2)
-            dispatch(addItem({ id: id, titulo: titulo, conteudo: conteudo + id }))
+            const bloco = { 
+                id: id, 
+                tipo: 'texto', 
+                conteudo: { 
+                    titulo: titulo, 
+                    texto: texto 
+                }
+            }
+            dispatch(addBloco(bloco))
             setTitulo('')
-            setConteudo('')
+            setTexto('')
         }
     }
 
@@ -32,7 +46,7 @@ export default function Formulario() {
         <Card sx={{ my: 3 }}>
             <CardContent>
                 <Typography variant='h6' mb={3} align='center'>
-                    Formulário de dados
+                    Formulário de bloco
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit}
@@ -48,12 +62,13 @@ export default function Formulario() {
                         required
                     />
                     <TextField
-                        value={conteudo}
-                        onChange={handleConteudoChange}
-                        label='Conteudo'
+                        value={texto}
+                        onChange={handleTextoChange}
+                        label='Texto'
                         color='secondary'
                         size='small'
                         required
+                        multiline
                     />
                     <Button
                         type='submit'
